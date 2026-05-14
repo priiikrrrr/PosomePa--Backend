@@ -81,10 +81,19 @@ exports.smartSearch = async (req, res) => {
 
    if (filters.location && typeof filters.location === 'string' && filters.location.trim() !== '') {
   mongoQuery['location.city'] = { $regex: new RegExp(filters.location.trim(), 'i') };
-}
-if (filters.category && typeof filters.category === 'string' && filters.category.trim() !== '') {
-  mongoQuery.category = { $regex: new RegExp(filters.category.trim(), 'i') };
 } 
+//Space model is a referenced ObjectId not string field hence the regex error
+if (filters.category && typeof filters.category === 'string' && filters.category.trim() !== '') {
+  const Category = require('../models/Category');
+  const matchingCategories = await Category.find({ 
+    name: { $regex: new RegExp(filters.category.trim(), 'i') },
+    isActive: true
+  }).select('_id');
+  
+  if (matchingCategories.length > 0) {
+    mongoQuery.category = { $in: matchingCategories.map(c => c._id) };
+  }
+}
 
     if (filters.maxPrice) {
       mongoQuery.price = { $lte: filters.maxPrice };
