@@ -36,7 +36,7 @@ exports.createBooking = async (req, res) => {
     const dayStart = new Date(bookingDateStr + 'T00:00:00.000Z');
     const dayEnd = new Date(bookingDateStr + 'T23:59:59.999Z');
     
-    // Clean up unpaid bookings older than 15 minutes
+    // Clean unpaid bookings older than 15 minutes
     await Booking.deleteMany({
       space: spaceId,
       paymentStatus: 'pending',

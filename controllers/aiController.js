@@ -36,9 +36,9 @@ exports.smartSearch = async (req, res) => {
 
     const groqApiKey = process.env.GROQ_API_KEY;
     
-    if (!groqApiKey || groqApiKey === 'gsk_your_groq_api_key_here') {
+    if (!groqApiKey ) {
       return res.status(500).json({ 
-        message: 'AI not configured. Please add GROQ_API_KEY to backend/.env file. Get free key at https://console.groq.com/keys'
+        message: 'AI not configured. GROQ_API_KEY is missing.'
       });
     }
 
@@ -155,16 +155,7 @@ if (filters.category && typeof filters.category === 'string' && filters.category
         message: 'Invalid Groq API key. Please check your GROQ_API_KEY in .env file.'
       });
     }
-
-    if (error.code === 'ECONNABORTED' || error.code === 'ENOTFOUND') {
-      return res.status(500).json({ 
-        message: 'Network error. Please check your internet connection.'
-      });
-    }
-
-    res.status(500).json({ 
-      message: error.response?.data?.error?.message || error.message || 'AI search failed. Please try again.' 
-    });
+res.status(500).json({ message: error.response?.data?.error?.message || error.message || 'AI search failed' });
   }
 };
 
