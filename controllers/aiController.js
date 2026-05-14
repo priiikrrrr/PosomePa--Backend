@@ -79,13 +79,12 @@ exports.smartSearch = async (req, res) => {
     }
     const mongoQuery = { isActive: true };
 
-    if (filters.location) {
-      mongoQuery['location.city'] = { $regex: new RegExp(filters.location, 'i') };
-    }
-
-    if (filters.category) {
-      mongoQuery.category = { $regex: new RegExp(filters.category, 'i') };
-    }
+   if (filters.location && typeof filters.location === 'string' && filters.location.trim() !== '') {
+  mongoQuery['location.city'] = { $regex: new RegExp(filters.location.trim(), 'i') };
+}
+if (filters.category && typeof filters.category === 'string' && filters.category.trim() !== '') {
+  mongoQuery.category = { $regex: new RegExp(filters.category.trim(), 'i') };
+} 
 
     if (filters.maxPrice) {
       mongoQuery.price = { $lte: filters.maxPrice };
