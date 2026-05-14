@@ -1,539 +1,833 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PosomePa Admin - Host Applications</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <style>
-    * { font-family: 'Inter', sans-serif; }
-    body { background: #F9FAFB; min-height: 100vh; }
-    .gradient-bg { background: #7C3AED; }
-    .card { background: #ffffff; }
-    .stat-card { transition: box-shadow 0.2s; }
-    .stat-card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.08); }
-    .app-card { transition: all 0.2s; }
-    .app-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    .badge { font-size: 11px; padding: 4px 10px; border-radius: 6px; font-weight: 600; }
-    .tab-btn { padding: 10px 20px; border-radius: 8px; font-weight: 500; transition: all 0.2s; }
-    .tab-btn.active { background: #8B5CF6; color: white; }
-    .tab-btn:hover:not(.active) { background: #EDE9FE; }
-    .btn-primary { background: #8B5CF6; transition: all 0.2s; }
-    .btn-primary:hover { background: #6D28D9; }
-    .btn-approve { background: #059669; }
-    .btn-approve:hover { background: #047857; }
-    .btn-reject { background: #DC2626; }
-    .btn-reject:hover { background: #B91C1C; }
-    .spinner {
-      border: 3px solid #E5E7EB;
-      border-top: 3px solid #8B5CF6;
-      border-radius: 50%;
-      width: 30px;
-      height: 30px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .modal { animation: modalIn 0.3s ease-out; }
-    @keyframes modalIn { from { opacity: 0; transform: scale(0.95); } to { opacity: 1; transform: scale(1); } }
-    .doc-preview { max-width: 200px; max-height: 150px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; }
-    .doc-preview:hover { opacity: 0.85; }
-    .toast { animation: slideIn 0.3s ease-out; }
-    @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-  </style>
-</head>
-<body class="p-6">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PosomePa Admin - Host Applications</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-  <!-- TOAST CONTAINER-->
-  <div id="toast-container" class="fixed top-6 right-6 z-50 space-y-3"></div>
+    <!-- css -->
 
+    <style>
+      * {
+        font-family: "Inter", sans-serif;
+      }
+      body {
+        background: #f9fafb;
+        min-height: 100vh;
+      }
+      .gradient-bg {
+        background: #7c3aed;
+      }
+      .card {
+        background: #ffffff;
+      }
+      .stat-card {
+        transition: box-shadow 0.2s;
+      }
+      .stat-card:hover {
+        box-shadow: 0 8px 25px rgba(139, 92, 246, 0.12);
+      }
+      .app-card {
+        transition: all 0.2s;
+      }
+      .app-card:hover {
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      }
+      .badge {
+        font-size: 11px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+      }
+      .tab-btn {
+        padding: 10px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+      .tab-btn.active {
+        background: #8b5cf6;
+        color: white;
+      }
+      .tab-btn:hover:not(.active) {
+        background: #ede9fe;
+      }
+      .btn-primary {
+        background: #8b5cf6;
+        transition: all 0.2s;
+      }
+      .btn-approve {
+        background: #059669;
+      }
+      .btn-approve:hover {
+        background: #047857;
+      }
+      .btn-reject {
+        background: #dc2626;
+      }
+      .btn-reject:hover {
+        background: #b91c1c;
+      }
+      .spinner {
+        border: 3px solid #e5e7eb;
+        border-top: 3px solid #8b5cf6;
+        border-radius: 50%;
+        width: 30px;
+        height: 30px;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+      .modal {
+        animation: modalIn 0.3s ease-out;
+      }
+      @keyframes modalIn {
+        from {
+          opacity: 0;
+          transform: scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+      .doc-preview {
+        max-width: 200px;
+        max-height: 150px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      .doc-preview:hover {
+        transform: scale(1.05);
+      }
+      .toast {
+        animation: slideIn 0.3s ease-out;
+      }
+      @keyframes slideIn {
+        from {
+          transform: translateX(100%);
+          opacity: 0;
+        }
+        to {
+          transform: translateX(0);
+          opacity: 1;
+        }
+      }
+    </style>
+  </head>
 
-  <!-- LOGIN SCREEN-->
-  <div id="login-screen" class="min-h-screen flex items-center justify-center p-6">
+  <!-- html -->
 
-    <div class="card rounded-xl p-8 w-full max-w-md relative z-10 shadow-lg">
+  <body class="p-6">
+    <div id="toast-container" class="fixed top-6 right-6 z-50 space-y-3"></div>
+    <div
+      id="login-screen"
+      class="min-h-screen flex items-center justify-center p-6"
+    >
+      <div class="card rounded-xl p-8 w-full max-w-md relative z-10 shadow-lg">
+        <div class="text-center mb-6">
+          <div
+            style="
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: center;
+              margin: 0 auto 1.5rem;
+              width: 100%;
+            "
+          >
+            <svg
+              id="posomepa-logo"
+              viewBox="0 0 310 115"
+              width="310"
+              height="90"
+              xmlns="http://www.w3.org/2000/svg"
+              overflow="visible"
+              style="display: block; margin: 0 auto"
+            >
+              <defs>
+                <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#7B6CF6" />
+                  <stop offset="100%" stop-color="#E879C6" />
+                </linearGradient>
+              </defs>
+              <text
+                id="lP"
+                font-family="Inter,sans-serif"
+                font-size="72"
+                font-weight="500"
+                fill="url(#logoGrad)"
+                x="0"
+                y="80"
+                opacity="0"
+              >
+                P
+              </text>
 
-      <!-- Logo -->
-      <div class="text-center mb-6">
-        <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 1.5rem;width:100%;">
-          <svg id="posomepa-logo" viewBox="0 0 310 115" width="310" height="90"
-               xmlns="http://www.w3.org/2000/svg" overflow="visible" style="display:block;margin:0 auto;">
-            <defs>
-              <linearGradient id="logoGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%"   stop-color="#7B6CF6"/>
-                <stop offset="100%" stop-color="#E879C6"/>
-              </linearGradient>
-            </defs>
-            <!-- P -->
-            <text id="lP" font-family="Inter,sans-serif" font-size="72" font-weight="500"
-                  fill="url(#logoGrad)" x="0" y="80" opacity="0">P</text>
-            <!-- Pill (the "O" shape that expands to reveal "SOME") -->
-            <rect id="lPill" x="106" y="30" width="44" height="44" rx="22" ry="22"
-                  fill="none" stroke="url(#logoGrad)" stroke-width="3.5" opacity="0"/>
-            <!-- SOME text inside pill -->
-            <text id="lSome" font-family="Inter,sans-serif" font-size="16" font-weight="600"
-                  letter-spacing="3.5" fill="url(#logoGrad)" text-anchor="middle"
-                  dominant-baseline="central" x="128" y="52" opacity="0">SOME</text>
-            <!-- PA -->
-            <text id="lPA" font-family="Inter,sans-serif" font-size="72" font-weight="500"
-                  fill="url(#logoGrad)" x="206" y="80" opacity="0">PA</text>
-            <!-- Tagline -->
-            <text id="lTagline" font-family="Inter,sans-serif" font-size="13" font-weight="400"
-                  letter-spacing="2.5" fill="#9CA3AF" text-anchor="middle"
-                  x="128" y="105" opacity="0">post some places</text>
-          </svg>
+              <rect
+                id="lPill"
+                x="106"
+                y="30"
+                width="44"
+                height="44"
+                rx="22"
+                ry="22"
+                fill="none"
+                stroke="url(#logoGrad)"
+                stroke-width="3.5"
+                opacity="0"
+              />
+
+              <text
+                id="lSome"
+                font-family="Inter,sans-serif"
+                font-size="16"
+                font-weight="600"
+                letter-spacing="3.5"
+                fill="url(#logoGrad)"
+                text-anchor="middle"
+                dominant-baseline="central"
+                x="128"
+                y="52"
+                opacity="0"
+              >
+                SOME
+              </text>
+
+              <text
+                id="lPA"
+                font-family="Inter,sans-serif"
+                font-size="72"
+                font-weight="500"
+                fill="url(#logoGrad)"
+                x="206"
+                y="80"
+                opacity="0"
+              >
+                PA
+              </text>
+
+              <text
+                id="lTagline"
+                font-family="Inter,sans-serif"
+                font-size="13"
+                font-weight="400"
+                letter-spacing="2.5"
+                fill="#9CA3AF"
+                text-anchor="middle"
+                x="128"
+                y="105"
+                opacity="0"
+              >
+                post some places
+              </text>
+            </svg>
+          </div>
+          <p class="text-gray-500 mt-2">Sign in to manage host applications</p>
         </div>
-        <p class="text-gray-500 mt-2">Sign in to manage host applications</p>
-      </div>
 
-      <!-- Logo -->
-      <script>
-        (function () {
-          // ── Element refs 
-          var P       = document.getElementById('lP');
-          var pill    = document.getElementById('lPill');
-          var some    = document.getElementById('lSome');
-          var PA      = document.getElementById('lPA');
-          var tagline = document.getElementById('lTagline');
+        <!-- Logo animation via gem-->
+        <script>
+          (function () {
+            var P = document.getElementById("lP");
+            var pill = document.getElementById("lPill");
+            var some = document.getElementById("lSome");
+            var PA = document.getElementById("lPA");
+            var tagline = document.getElementById("lTagline");
 
-          // ── Layout constants 
-          var PILL_CX      = 128;
-          var PILL_W_START = 44;
-          var PILL_W_END   = 148;
-          var PA_X_FINAL   = 206;
+            var PILL_CX = 128;
+            var PILL_W_START = 44;
+            var PILL_W_END = 148;
+            var PA_X_FINAL = 206;
+            function easeOut(t) {
+              return 1 - Math.pow(1 - t, 3);
+            }
+            function easeInOut(t) {
+              return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+            }
 
-          // ── Easing ────────────────────────────────────────────────
-          function easeOut(t)    { return 1 - Math.pow(1 - t, 3); }
-          function easeInOut(t)  { return t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2; }
+            function run(dur, fn, done) {
+              var start = performance.now();
+              (function frame(now) {
+                var t = Math.min((now - start) / dur, 1);
+                fn(t);
+                if (t < 1) {
+                  requestAnimationFrame(frame);
+                } else if (done) {
+                  done();
+                }
+              })(performance.now());
+            }
+            function reset() {
+              P.style.opacity = 0;
+              P.setAttribute("x", 0);
+              pill.style.opacity = 0;
+              pill.setAttribute("width", PILL_W_START);
+              pill.setAttribute("x", PILL_CX - PILL_W_START / 2);
+              some.style.opacity = 0;
+              PA.style.opacity = 0;
+              PA.setAttribute("x", PA_X_FINAL);
+              tagline.style.opacity = 0;
+            }
 
-          // ── Animation runner 
-          // Calls fn(t) every frame for `dur` ms, then calls done().
-          function run(dur, fn, done) {
-            var start = performance.now();
-            (function frame(now) {
-              var t = Math.min((now - start) / dur, 1);
-              fn(t);
-              if (t < 1) {
-                requestAnimationFrame(frame);
-              } else if (done) {
-                done();
-              }
-            })(performance.now());
-          }
-
-          // ── Reset all elements to invisible start positions 
-          function reset() {
-            P.style.opacity       = 0;  P.setAttribute('x', 0);
-            pill.style.opacity    = 0;
-            pill.setAttribute('width', PILL_W_START);
-            pill.setAttribute('x', PILL_CX - PILL_W_START / 2);
-            some.style.opacity    = 0;
-            PA.style.opacity      = 0;  PA.setAttribute('x', PA_X_FINAL);
-            tagline.style.opacity = 0;
-          }
-
-          // ── Intro sequence 
-          function playIntro(onComplete) {
-            setTimeout(function () {
-
-              // 1. Fade in "P" sliding from left
-              run(400, function (t) {
-                var e = easeOut(t);
-                P.style.opacity = e;
-                P.setAttribute('x', 0 - 20 * (1 - e));
-              }, function () {
-
-                setTimeout(function () {
-                  // 2. Fade in pill circle
-                  run(350, function (t) {
-                    pill.style.opacity = easeOut(t);
-                  }, function () {
-
+            function playIntro(onComplete) {
+              setTimeout(function () {
+                run(
+                  400,
+                  function (t) {
+                    var e = easeOut(t);
+                    P.style.opacity = e;
+                    P.setAttribute("x", 0 - 20 * (1 - e));
+                  },
+                  function () {
                     setTimeout(function () {
-                      // 3. Pill expands; "SOME" fades in at 45% progress
-                      run(680, function (t) {
-                        var te = easeInOut(t);
-                        var w  = PILL_W_START + (PILL_W_END - PILL_W_START) * te;
-                        pill.setAttribute('width', w);
-                        pill.setAttribute('x', PILL_CX - w / 2);
-                        if (t > 0.45) {
-                          some.style.opacity = easeOut((t - 0.45) / 0.55);
-                        }
-                      }, function () {
-
-                        setTimeout(function () {
-                          // 4. Fade in "PA" sliding from right
-                          run(400, function (t) {
-                            var e = easeOut(t);
-                            PA.style.opacity = e;
-                            PA.setAttribute('x', PA_X_FINAL + 20 * (1 - e));
-                          }, function () {
-
-                            setTimeout(function () {
-                              // 5. Fade in tagline
-                              run(500, function (t) {
-                                tagline.style.opacity = easeOut(t);
-                              }, onComplete);
-                            }, 180);
-
-                          });
-                        }, 100);
-
-                      });
+                      run(
+                        350,
+                        function (t) {
+                          pill.style.opacity = easeOut(t);
+                        },
+                        function () {
+                          setTimeout(function () {
+                            run(
+                              680,
+                              function (t) {
+                                var te = easeInOut(t);
+                                var w =
+                                  PILL_W_START +
+                                  (PILL_W_END - PILL_W_START) * te;
+                                pill.setAttribute("width", w);
+                                pill.setAttribute("x", PILL_CX - w / 2);
+                                if (t > 0.45) {
+                                  some.style.opacity = easeOut(
+                                    (t - 0.45) / 0.55,
+                                  );
+                                }
+                              },
+                              function () {
+                                setTimeout(function () {
+                                  run(
+                                    400,
+                                    function (t) {
+                                      var e = easeOut(t);
+                                      PA.style.opacity = e;
+                                      PA.setAttribute(
+                                        "x",
+                                        PA_X_FINAL + 20 * (1 - e),
+                                      );
+                                    },
+                                    function () {
+                                      setTimeout(function () {
+                                        run(
+                                          500,
+                                          function (t) {
+                                            tagline.style.opacity = easeOut(t);
+                                          },
+                                          onComplete,
+                                        );
+                                      }, 180);
+                                    },
+                                  );
+                                }, 100);
+                              },
+                            );
+                          }, 80);
+                        },
+                      );
                     }, 80);
-
+                  },
+                );
+              }, 200);
+            }
+            function playOutro(onComplete) {
+              run(
+                600,
+                function (t) {
+                  var e = 1 - easeOut(t);
+                  P.style.opacity = e;
+                  pill.style.opacity = e;
+                  some.style.opacity = e;
+                  PA.style.opacity = e;
+                  tagline.style.opacity = e;
+                },
+                onComplete,
+              );
+            }
+            function cycle() {
+              reset();
+              playIntro(function () {
+                setTimeout(function () {
+                  playOutro(function () {
+                    setTimeout(cycle, 400);
                   });
-                }, 80);
-
+                }, 2500);
               });
-            }, 200);
+            }
+
+            cycle();
+          })();
+        </script>
+
+        <!-- Login -->
+        <form id="login-form" class="space-y-5">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Email</label
+            >
+            <input
+              type="email"
+              id="login-email"
+              required
+              class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition"
+              placeholder="admin@example.com"
+            />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2"
+              >Password</label
+            >
+            <input
+              type="password"
+              id="login-password"
+              required
+              class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition"
+              placeholder="••••••••"
+            />
+          </div>
+          <div
+            id="login-error"
+            class="hidden text-red-500 text-sm text-center py-2"
+          ></div>
+          <button
+            type="submit"
+            id="login-btn"
+            class="btn-primary w-full py-3 rounded-lg text-white font-semibold text-sm"
+          >
+            Sign In
+          </button>
+        </form>
+      </div>
+    </div>
+    <div id="dashboard-screen" class="hidden max-w-7xl mx-auto">
+      <!-- Header -->
+      <div class="flex items-center justify-between mb-8">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-800">Host Applications</h1>
+          <p class="text-gray-500 mt-1">Review and manage host applications</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <span id="admin-email" class="text-gray-600 text-sm"></span>
+          <button
+            onclick="logout()"
+            class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+
+      <!-- Stats cards -->
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+        <div class="stat-card card rounded-2xl p-5 shadow-lg">
+          <p class="text-gray-500 text-sm">Total</p>
+          <p id="stat-total" class="text-3xl font-bold text-gray-800">0</p>
+        </div>
+        <div class="stat-card card rounded-2xl p-5 shadow-lg">
+          <p class="text-gray-500 text-sm">Pending</p>
+          <p id="stat-pending" class="text-3xl font-bold text-yellow-600">0</p>
+        </div>
+        <div class="stat-card card rounded-2xl p-5 shadow-lg">
+          <p class="text-gray-500 text-sm">Verified</p>
+          <p id="stat-verified" class="text-3xl font-bold text-green-600">0</p>
+        </div>
+        <div class="stat-card card rounded-2xl p-5 shadow-lg">
+          <p class="text-gray-500 text-sm">Rejected</p>
+          <p id="stat-rejected" class="text-3xl font-bold text-red-600">0</p>
+        </div>
+        <div class="stat-card card rounded-2xl p-5 shadow-lg">
+          <p class="text-gray-500 text-sm">Verified Hosts</p>
+          <p id="stat-hosts" class="text-3xl font-bold text-purple-600">0</p>
+        </div>
+      </div>
+
+      <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
+        <button
+          onclick="filterApplications('all')"
+          class="tab-btn active"
+          data-tab="all"
+        >
+          All
+        </button>
+        <button
+          onclick="filterApplications('pending')"
+          class="tab-btn"
+          data-tab="pending"
+        >
+          Pending
+        </button>
+        <button
+          onclick="filterApplications('verified')"
+          class="tab-btn"
+          data-tab="verified"
+        >
+          Verified
+        </button>
+        <button
+          onclick="filterApplications('rejected')"
+          class="tab-btn"
+          data-tab="rejected"
+        >
+          Rejected
+        </button>
+        <button
+          onclick="filterApplications('cancellations')"
+          class="tab-btn"
+          data-tab="cancellations"
+        >
+          Cancellations
+        </button>
+      </div>
+
+      <div id="applications-list" class="space-y-4">
+        <div class="text-center py-12">
+          <div class="spinner mx-auto mb-4"></div>
+          <p class="text-gray-500">Loading applications...</p>
+        </div>
+      </div>
+      <div
+        id="pagination"
+        class="flex justify-center items-center gap-2 mt-8"
+      ></div>
+    </div>
+    <div id="detail-modal" class="hidden fixed inset-0 z-50">
+      <div
+        class="absolute inset-0 bg-black/50"
+        onclick="closeDetailModal()"
+      ></div>
+      <div
+        class="modal absolute inset-4 md:inset-10 bg-white rounded-xl overflow-hidden flex flex-col max-w-4xl mx-auto"
+      >
+        <div class="gradient-bg p-6 flex items-center justify-between">
+          <h2 class="text-xl font-bold text-white">Application Details</h2>
+          <button
+            onclick="closeDetailModal()"
+            class="text-white/80 hover:text-white"
+          >
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
+        </div>
+        <div id="detail-content" class="flex-1 overflow-y-auto p-6"></div>
+        <div
+          id="detail-actions"
+          class="p-6 border-t flex justify-end gap-4"
+        ></div>
+      </div>
+    </div>
+
+    <div id="verify-modal" class="hidden fixed inset-0 z-50">
+      <div
+        class="absolute inset-0 bg-black/50"
+        onclick="closeVerifyModal()"
+      ></div>
+      <div
+        class="modal absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-8 w-full max-w-lg"
+      >
+        <h3 class="text-xl font-bold text-gray-800 mb-2">
+          Verify Bank Details
+        </h3>
+        <p class="text-gray-500 text-sm mb-6">
+          Verify the bank details before approving this application.
+        </p>
+
+        <div class="space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1"
+              >Bank Name</label
+            >
+            <div
+              id="verify-bankName"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-gray-800"
+            ></div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1"
+              >Account Number</label
+            >
+            <div
+              id="verify-accountNumber"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-gray-800"
+            ></div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1"
+              >IFSC Code</label
+            >
+            <div
+              id="verify-ifscCode"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-gray-800"
+            ></div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-600 mb-1"
+              >Branch</label
+            >
+            <div
+              id="verify-branch"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-gray-800"
+            ></div>
+          </div>
+          <div id="verify-upi-container" class="hidden">
+            <label class="block text-sm font-medium text-gray-600 mb-1"
+              >UPI ID</label
+            >
+            <div
+              id="verify-upiId"
+              class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-purple-700"
+            ></div>
+          </div>
+        </div>
+
+        <div class="flex justify-end gap-3 mt-6">
+          <button
+            onclick="closeVerifyModal()"
+            class="px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-700 font-medium transition"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="confirmApprove()"
+            id="verify-modal-btn"
+            class="btn-approve px-6 py-3 rounded-xl text-white font-medium transition"
+          >
+            ✓ Confirm &amp; Approve
+          </button>
+        </div>
+      </div>
+    </div>
+    <div id="reject-modal" class="hidden fixed inset-0 z-50">
+      <div
+        class="absolute inset-0 bg-black/50"
+        onclick="closeRejectModal()"
+      ></div>
+      <div
+        class="modal absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-2xl p-8 w-full max-w-lg"
+      >
+        <h3 class="text-xl font-bold text-gray-800 mb-4">Rejection Reason</h3>
+        <p class="text-gray-500 text-sm mb-4">
+          Please provide a reason for rejecting this application. The applicant
+          will be notified.
+        </p>
+        <textarea
+          id="reject-reason"
+          rows="4"
+          class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition resize-none"
+          placeholder="Enter rejection reason..."
+        ></textarea>
+        <div class="flex justify-end gap-3 mt-6">
+          <button
+            onclick="closeRejectModal()"
+            class="px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-700 font-medium transition"
+          >
+            Cancel
+          </button>
+          <button
+            onclick="confirmReject()"
+            id="reject-modal-btn"
+            class="btn-reject px-6 py-3 rounded-xl text-white font-medium transition"
+          >
+            Reject Application
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      id="image-modal"
+      class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
+      onclick="closeImageModal()"
+    >
+      <button class="absolute top-6 right-6 text-white/80 hover:text-white">
+        <svg
+          class="w-8 h-8"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+      <img
+        id="modal-image"
+        src=""
+        alt="Document"
+        class="max-w-full max-h-full rounded-lg"
+      />
+    </div>
+
+    <!--SCRIPT-->
+
+    <script>
+      //Config
+      const API_BASE = window.location.origin;
+      let authToken = localStorage.getItem("adminToken");
+      let currentFilter = "all";
+      let currentPage = 1;
+      let selectedAppId = null;
+      let selectedAppForReject = null;
+      let selectedAppForVerify = null;
+      checkAuth();
+      async function checkAuth() {
+        if (!authToken) {
+          showLogin();
+          return;
+        }
+        try {
+          const res = await fetch(`${API_BASE}/admin/me`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await res.json();
+          if (data.authenticated) {
+            showDashboard();
+            loadStats();
+            loadApplications();
+          } else {
+            logout();
           }
-
-          // ── Outro sequence 
-          function playOutro(onComplete) {
-            run(600, function (t) {
-              var e = 1 - easeOut(t);
-              P.style.opacity       = e;
-              pill.style.opacity    = e;
-              some.style.opacity    = e;
-              PA.style.opacity      = e;
-              tagline.style.opacity = e;
-            }, onComplete);
-          }
-
-          // ── Play once on load 
-          reset();
-          playIntro(function () {});
-        })();
-      </script>
-
-      <!-- Login form -->
-      <form id="login-form" class="space-y-5">
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
-          <input type="email" id="login-email" required
-            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition"
-            placeholder="admin@example.com">
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
-          <input type="password" id="login-password" required
-            class="w-full px-4 py-3 rounded-lg border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition"
-            placeholder="••••••••">
-        </div>
-        <div id="login-error" class="hidden text-red-500 text-sm text-center py-2"></div>
-        <button type="submit" id="login-btn"
-          class="btn-primary w-full py-3 rounded-lg text-white font-semibold text-sm">
-          Sign In
-        </button>
-      </form>
-
-    </div>
-  </div><!-- /login-screen -->
-
-
-  <!-- DASHBOARD SCREEN-->
-  <div id="dashboard-screen" class="hidden max-w-7xl mx-auto">
-
-    <!-- Header -->
-    <div class="flex items-center justify-between mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-gray-800">Host Applications</h1>
-        <p class="text-gray-500 mt-1">Review and manage host applications</p>
-      </div>
-      <div class="flex items-center gap-4">
-        <span id="admin-email" class="text-gray-600 text-sm"></span>
-        <button onclick="logout()"
-          class="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition">
-          Logout
-        </button>
-      </div>
-    </div>
-
-    <!-- Stats cards -->
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-      <div class="stat-card card rounded-xl p-5 shadow">
-        <p class="text-gray-500 text-sm">Total</p>
-        <p id="stat-total" class="text-3xl font-bold text-gray-800">0</p>
-      </div>
-      <div class="stat-card card rounded-xl p-5 shadow">
-        <p class="text-gray-500 text-sm">Pending</p>
-        <p id="stat-pending" class="text-3xl font-bold text-yellow-600">0</p>
-      </div>
-      <div class="stat-card card rounded-xl p-5 shadow">
-        <p class="text-gray-500 text-sm">Verified</p>
-        <p id="stat-verified" class="text-3xl font-bold text-green-600">0</p>
-      </div>
-      <div class="stat-card card rounded-xl p-5 shadow">
-        <p class="text-gray-500 text-sm">Rejected</p>
-        <p id="stat-rejected" class="text-3xl font-bold text-red-600">0</p>
-      </div>
-      <div class="stat-card card rounded-xl p-5 shadow">
-        <p class="text-gray-500 text-sm">Verified Hosts</p>
-        <p id="stat-hosts" class="text-3xl font-bold text-gray-800">0</p>
-      </div>
-    </div>
-
-    <!-- Filter tabs -->
-    <div class="flex gap-2 mb-6 overflow-x-auto pb-2">
-      <button onclick="filterApplications('all')"           class="tab-btn active" data-tab="all">All</button>
-      <button onclick="filterApplications('pending')"       class="tab-btn" data-tab="pending">Pending</button>
-      <button onclick="filterApplications('verified')"      class="tab-btn" data-tab="verified">Verified</button>
-      <button onclick="filterApplications('rejected')"      class="tab-btn" data-tab="rejected">Rejected</button>
-      <button onclick="filterApplications('cancellations')" class="tab-btn" data-tab="cancellations">Cancellations</button>
-    </div>
-
-    <!-- Applications list -->
-    <div id="applications-list" class="space-y-4">
-      <div class="text-center py-12">
-        <div class="spinner mx-auto mb-4"></div>
-        <p class="text-gray-500">Loading applications...</p>
-      </div>
-    </div>
-
-    <!-- Pagination -->
-    <div id="pagination" class="flex justify-center items-center gap-2 mt-8"></div>
-
-  </div><!-- /dashboard-screen -->
-
-
-  <!-- Application Detail-->
-  <div id="detail-modal" class="hidden fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/50" onclick="closeDetailModal()"></div>
-    <div class="modal absolute inset-4 md:inset-10 bg-white rounded-xl overflow-hidden flex flex-col max-w-4xl mx-auto">
-      <div class="gradient-bg p-6 flex items-center justify-between">
-        <h2 class="text-xl font-bold text-white">Application Details</h2>
-        <button onclick="closeDetailModal()" class="text-white/80 hover:text-white">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-          </svg>
-        </button>
-      </div>
-      <div id="detail-content" class="flex-1 overflow-y-auto p-5"></div>
-      <div id="detail-actions" class="p-4 border-t flex justify-end gap-4"></div>
-    </div>
-  </div>
-
-
-  <!-- MODAL — Verify Bank Details (shown before approving)-->
-  <div id="verify-modal" class="hidden fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/50" onclick="closeVerifyModal()"></div>
-    <div class="modal absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-6 w-full max-w-lg">
-      <h3 class="text-xl font-bold text-gray-800 mb-2">Verify Bank Details</h3>
-      <p class="text-gray-500 text-sm mb-6">Verify the bank details before approving this application.</p>
-
-      <div class="space-y-3">
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">Bank Name</label>
-          <div id="verify-bankName" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-gray-800"></div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">Account Number</label>
-          <div id="verify-accountNumber" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-gray-800"></div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">IFSC Code</label>
-          <div id="verify-ifscCode" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-gray-800"></div>
-        </div>
-        <div>
-          <label class="block text-sm font-medium text-gray-600 mb-1">Branch</label>
-          <div id="verify-branch" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-gray-800"></div>
-        </div>
-        <div id="verify-upi-container" class="hidden">
-          <label class="block text-sm font-medium text-gray-600 mb-1">UPI ID</label>
-          <div id="verify-upiId" class="w-full px-4 py-3 rounded-xl border border-gray-200 bg-gray-50 font-semibold text-purple-700"></div>
-        </div>
-      </div>
-
-      <div class="flex justify-end gap-3 mt-6">
-        <button onclick="closeVerifyModal()"
-          class="px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-700 font-medium transition">
-          Cancel
-        </button>
-        <button onclick="confirmApprove()" id="verify-modal-btn"
-          class="btn-approve px-6 py-3 rounded-xl text-white font-medium transition">
-          ✓ Confirm &amp; Approve
-        </button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Reject Reason-->
-  <div id="reject-modal" class="hidden fixed inset-0 z-50">
-    <div class="absolute inset-0 bg-black/50" onclick="closeRejectModal()"></div>
-    <div class="modal absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-xl p-6 w-full max-w-lg">
-      <h3 class="text-xl font-bold text-gray-800 mb-4">Rejection Reason</h3>
-      <p class="text-gray-500 text-sm mb-4">
-        Please provide a reason for rejecting this application. The applicant will be notified.
-      </p>
-      <textarea id="reject-reason" rows="4"
-        class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-purple-500 focus:ring-2 focus:ring-purple-200 outline-none transition resize-none"
-        placeholder="Enter rejection reason..."></textarea>
-      <div class="flex justify-end gap-3 mt-6">
-        <button onclick="closeRejectModal()"
-          class="px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-700 font-medium transition">
-          Cancel
-        </button>
-        <button onclick="confirmReject()" id="reject-modal-btn"
-          class="btn-reject px-6 py-3 rounded-xl text-white font-medium transition">
-          Reject Application
-        </button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- Full-screen image viewer-->
-  <div id="image-modal"
-    class="hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-6"
-    onclick="closeImageModal()">
-    <button class="absolute top-6 right-6 text-white/80 hover:text-white">
-      <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-      </svg>
-    </button>
-    <img id="modal-image" src="" alt="Document" class="max-w-full max-h-full rounded-lg">
-  </div>
-
-
-  <!--MAIN SCRIPT-->
-  <script>
-
-    // ── Config & state 
-    const API_BASE = window.location.origin;
-    let authToken           = localStorage.getItem('adminToken');
-    let currentFilter       = 'all';
-    let currentPage         = 1;
-    let selectedAppId       = null;
-    let selectedAppForReject = null;
-    let selectedAppForVerify = null;
-
-    // ── Boot 
-    checkAuth();
-
-    // ── Auth 
-
-    async function checkAuth() {
-      if (!authToken) { showLogin(); return; }
-      try {
-        const res  = await fetch(`${API_BASE}/admin/me`, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        const data = await res.json();
-        if (data.authenticated) {
-          showDashboard();
-          loadStats();
-          loadApplications();
-        } else {
+        } catch (err) {
+          console.error("Auth check failed:", err);
           logout();
         }
-      } catch (err) {
-        console.error('Auth check failed:', err);
-        logout();
       }
-    }
 
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
+      document
+        .getElementById("login-form")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
 
-      const email    = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
-      const errorEl  = document.getElementById('login-error');
-      const btn      = document.getElementById('login-btn');
+          const email = document.getElementById("login-email").value;
+          const password = document.getElementById("login-password").value;
+          const errorEl = document.getElementById("login-error");
+          const btn = document.getElementById("login-btn");
 
-      btn.disabled    = true;
-      btn.innerHTML   = '<div class="spinner mx-auto" style="width:20px;height:20px;border-width:2px"></div>';
-      errorEl.classList.add('hidden');
+          btn.disabled = true;
+          btn.innerHTML =
+            '<div class="spinner mx-auto" style="width:20px;height:20px;border-width:2px"></div>';
+          errorEl.classList.add("hidden");
 
-      try {
-        const res  = await fetch(`${API_BASE}/admin/login`, {
-          method:  'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body:    JSON.stringify({ email, password })
+          try {
+            const res = await fetch(`${API_BASE}/admin/login`, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, password }),
+            });
+            const data = await res.json();
+
+            if (data.success) {
+              authToken = data.token;
+              localStorage.setItem("adminToken", authToken);
+              localStorage.setItem("adminEmail", data.email);
+              showDashboard();
+              loadStats();
+              loadApplications();
+            } else {
+              errorEl.textContent = data.message || "Invalid credentials";
+              errorEl.classList.remove("hidden");
+            }
+          } catch (err) {
+            errorEl.textContent = "Connection error. Please try again.";
+            errorEl.classList.remove("hidden");
+          } finally {
+            btn.disabled = false;
+            btn.innerHTML = "Sign In";
+          }
         });
-        const data = await res.json();
 
-        if (data.success) {
-          authToken = data.token;
-          localStorage.setItem('adminToken', authToken);
-          localStorage.setItem('adminEmail', data.email);
-          showDashboard();
-          loadStats();
-          loadApplications();
-        } else {
-          errorEl.textContent = data.message || 'Invalid credentials';
-          errorEl.classList.remove('hidden');
+      function logout() {
+        authToken = null;
+        localStorage.removeItem("adminToken");
+        localStorage.removeItem("adminEmail");
+        showLogin();
+      }
+      function showLogin() {
+        document.getElementById("login-screen").classList.remove("hidden");
+        document.getElementById("dashboard-screen").classList.add("hidden");
+      }
+
+      function showDashboard() {
+        document.getElementById("login-screen").classList.add("hidden");
+        document.getElementById("dashboard-screen").classList.remove("hidden");
+        document.getElementById("admin-email").textContent =
+          localStorage.getItem("adminEmail") || "";
+      }
+
+      //data
+      async function loadStats() {
+        try {
+          const res = await fetch(`${API_BASE}/admin/stats`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await res.json();
+          document.getElementById("stat-total").textContent =
+            data.totalApplications || 0;
+          document.getElementById("stat-pending").textContent =
+            data.pending || 0;
+          document.getElementById("stat-verified").textContent =
+            data.verified || 0;
+          document.getElementById("stat-rejected").textContent =
+            data.rejected || 0;
+          document.getElementById("stat-hosts").textContent =
+            data.verifiedHosts || 0;
+        } catch (err) {
+          console.error("Failed to load stats:", err);
         }
-      } catch (err) {
-        errorEl.textContent = 'Connection error. Please try again.';
-        errorEl.classList.remove('hidden');
-      } finally {
-        btn.disabled  = false;
-        btn.innerHTML = 'Sign In';
       }
-    });
+      async function loadApplications(page = 1) {
+        currentPage = page;
+        const listEl = document.getElementById("applications-list");
 
-    function logout() {
-      authToken = null;
-      localStorage.removeItem('adminToken');
-      localStorage.removeItem('adminEmail');
-      showLogin();
-    }
-
-    // ── Screen switching 
-
-    function showLogin() {
-      document.getElementById('login-screen').classList.remove('hidden');
-      document.getElementById('dashboard-screen').classList.add('hidden');
-    }
-
-    function showDashboard() {
-      document.getElementById('login-screen').classList.add('hidden');
-      document.getElementById('dashboard-screen').classList.remove('hidden');
-      document.getElementById('admin-email').textContent = localStorage.getItem('adminEmail') || '';
-    }
-
-    // ── Stats 
-
-    async function loadStats() {
-      try {
-        const res  = await fetch(`${API_BASE}/admin/stats`, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        const data = await res.json();
-        document.getElementById('stat-total').textContent    = data.totalApplications || 0;
-        document.getElementById('stat-pending').textContent  = data.pending            || 0;
-        document.getElementById('stat-verified').textContent = data.verified           || 0;
-        document.getElementById('stat-rejected').textContent = data.rejected           || 0;
-        document.getElementById('stat-hosts').textContent    = data.verifiedHosts      || 0;
-      } catch (err) {
-        console.error('Failed to load stats:', err);
-      }
-    }
-
-    // ── Applications list 
-
-    async function loadApplications(page = 1) {
-      currentPage = page;
-      const listEl = document.getElementById('applications-list');
-
-      listEl.innerHTML = `
+        listEl.innerHTML = `
         <div class="text-center py-12">
           <div class="spinner mx-auto mb-4"></div>
           <p class="text-gray-500">Loading applications...</p>
         </div>`;
 
-      try {
-        const res  = await fetch(
-          `${API_BASE}/admin/applications?status=${currentFilter}&page=${page}&limit=10`,
-          { headers: { 'Authorization': `Bearer ${authToken}` } }
-        );
-        const data = await res.json();
+        try {
+          const res = await fetch(
+            `${API_BASE}/admin/applications?status=${currentFilter}&page=${page}&limit=10`,
+            { headers: { Authorization: `Bearer ${authToken}` } },
+          );
+          const data = await res.json();
 
-        if (data.applications.length === 0) {
-          listEl.innerHTML = `
-            <div class="card rounded-xl p-10 text-center">
+          if (data.applications.length === 0) {
+            listEl.innerHTML = `
+            <div class="card rounded-2xl p-12 text-center">
               <svg class="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
                   d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0
@@ -541,22 +835,24 @@
               </svg>
               <p class="text-gray-500">No applications found</p>
             </div>`;
-          document.getElementById('pagination').innerHTML = '';
-          return;
-        }
+            document.getElementById("pagination").innerHTML = "";
+            return;
+          }
 
-        listEl.innerHTML = data.applications.map(app => `
-          <div class="app-card card rounded-xl p-5 shadow cursor-pointer"
+          listEl.innerHTML = data.applications
+            .map(
+              (app) => `
+          <div class="app-card card rounded-2xl p-6 shadow-lg fade-in cursor-pointer"
                onclick="viewApplication('${app._id}')">
             <div class="flex items-start justify-between">
               <div class="flex items-start gap-4">
                 <div class="w-12 h-12 rounded-full gradient-bg flex items-center justify-center text-white font-bold">
-                  ${(app.fullName || 'U').charAt(0).toUpperCase()}
+                  ${(app.fullName || "U").charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <h3 class="font-semibold text-gray-800">${app.fullName}</h3>
                   <p class="text-gray-500 text-sm">${app.email}</p>
-                  <p class="text-gray-400 text-xs mt-1">Phone: ${app.phone || 'N/A'}</p>
+                  <p class="text-gray-400 text-xs mt-1">Phone: ${app.phone || "N/A"}</p>
                 </div>
               </div>
               <div class="flex flex-col items-end gap-2">
@@ -567,93 +863,98 @@
               </div>
             </div>
             <div class="mt-4 pt-4 border-t flex gap-4 text-sm text-gray-500">
-              <span>Service: ${app.serviceType || 'N/A'}</span>
-              <span>ID: ${app.idType?.toUpperCase() || 'N/A'} - ${app.idNumber || 'N/A'}</span>
-              <span>City: ${app.city || 'N/A'}</span>
+              <span>Service: ${app.serviceType || "N/A"}</span>
+              <span>ID: ${app.idType?.toUpperCase() || "N/A"} - ${app.idNumber || "N/A"}</span>
+              <span>City: ${app.city || "N/A"}</span>
             </div>
-          </div>`
-        ).join('');
+          </div>`,
+            )
+            .join("");
 
-        renderPagination(data.pagination);
-
-      } catch (err) {
-        console.error('Failed to load applications:', err);
-        listEl.innerHTML = `
-            <div class="card rounded-xl p-10 text-center">
-              <p class="text-red-500">Failed to load applications</p>
+          renderPagination(data.pagination);
+        } catch (err) {
+          console.error("Failed to load applications:", err);
+          listEl.innerHTML = `
+          <div class="card rounded-2xl p-12 text-center">
+            <p class="text-red-500">Failed to load applications</p>
           </div>`;
+        }
       }
-    }
 
-    function renderPagination({ page, pages, total }) {
-      const container = document.getElementById('pagination');
-      if (pages <= 1) { container.innerHTML = ''; return; }
+      function renderPagination({ page, pages, total }) {
+        const container = document.getElementById("pagination");
+        if (pages <= 1) {
+          container.innerHTML = "";
+          return;
+        }
 
-      let html = '';
-      if (page > 1) {
-        html += `<button onclick="loadApplications(${page - 1})"
+        let html = "";
+        if (page > 1) {
+          html += `<button onclick="loadApplications(${page - 1})"
                    class="px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-50">Previous</button>`;
-      }
-      html += `<span class="px-4 py-2">Page ${page} of ${pages} (${total} total)</span>`;
-      if (page < pages) {
-        html += `<button onclick="loadApplications(${page + 1})"
+        }
+        html += `<span class="px-4 py-2">Page ${page} of ${pages} (${total} total)</span>`;
+        if (page < pages) {
+          html += `<button onclick="loadApplications(${page + 1})"
                    class="px-4 py-2 bg-white rounded-lg shadow hover:bg-gray-50">Next</button>`;
+        }
+        container.innerHTML = html;
       }
-      container.innerHTML = html;
-    }
 
-    function filterApplications(status) {
-      currentFilter = status;
-      document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.tab === status);
-      });
-      if (status === 'cancellations') {
-        loadCancellations();
-      } else {
-        loadApplications(1);
+      function filterApplications(status) {
+        currentFilter = status;
+        document.querySelectorAll(".tab-btn").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.tab === status);
+        });
+        if (status === "cancellations") {
+          loadCancellations();
+        } else {
+          loadApplications(1);
+        }
       }
-    }
 
-    // ── Cancellations 
-
-    async function loadCancellations() {
-      const listEl = document.getElementById('applications-list');
-      listEl.innerHTML = `
+      async function loadCancellations() {
+        const listEl = document.getElementById("applications-list");
+        listEl.innerHTML = `
         <div class="text-center py-12">
           <div class="spinner mx-auto mb-4"></div>
           <p class="text-gray-500">Loading cancellation requests...</p>
         </div>`;
 
-      try {
-        const res  = await fetch(
-          `${API_BASE}/api/bookings/admin?status=cancellation_requested`,
-          { headers: { 'Authorization': `Bearer ${authToken}` } }
-        );
-        const data = await res.json();
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/bookings/admin?status=cancellation_requested`,
+            { headers: { Authorization: `Bearer ${authToken}` } },
+          );
+          const data = await res.json();
 
-        if (!data.bookings?.length) {
-          listEl.innerHTML = `
-            <div class="card rounded-xl p-10 text-center">
+          if (!data.bookings?.length) {
+            listEl.innerHTML = `
+            <div class="card rounded-2xl p-12 text-center">
               <p class="text-gray-500">No cancellation requests</p>
             </div>`;
-          return;
-        }
+            return;
+          }
 
-        listEl.innerHTML = data.bookings.map(booking => {
-          const dateStr        = new Date(booking.date).toISOString().split('T')[0];
-          const [h, m]         = booking.startTime.split(':').map(Number);
-          const bookingStartMs = new Date(
-            `${dateStr}T${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:00+05:30`
-          ).getTime();
-          const isRefundEligible = bookingStartMs > Date.now() + 2 * 60 * 60 * 1000;
+          listEl.innerHTML = data.bookings
+            .map((booking) => {
+              const dateStr = new Date(booking.date)
+                .toISOString()
+                .split("T")[0];
+              const [h, m] = booking.startTime.split(":").map(Number);
+              const bookingStartMs = new Date(
+                `${dateStr}T${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:00+05:30`,
+              ).getTime();
+              const isRefundEligible =
+                bookingStartMs > Date.now() + 2 * 60 * 60 * 1000;
 
-          return `
-            <div class="app-card card rounded-xl p-5 shadow">
+              return `
+            <div class="app-card card rounded-2xl p-6 shadow-lg fade-in">
               <div class="flex items-start justify-between">
                 <div>
-                  <h3 class="font-semibold text-gray-800">${booking.user?.name || 'Unknown User'}</h3>
-                  <p class="text-gray-500 text-sm">${booking.user?.email || ''}</p>
-                  <p class="text-gray-500 text-sm mt-1">Property: ${booking.space?.title || 'Deleted Property'}</p>
+                  <h3 class="font-semibold text-gray-800">${booking.user?.name || "Unknown User"}</h3>
+                  <p class="text-gray-500 text-sm">${booking.user?.email || ""}</p>
+                  <p class="text-gray-500 text-sm mt-1">Property: ${booking.space?.title || "Deleted Property"}</p>
                   <p class="text-gray-500 text-sm">
                     Date: ${new Date(booking.date).toLocaleDateString()} |
                     ${booking.startTime} – ${booking.endTime}
@@ -663,28 +964,31 @@
                 <div class="flex flex-col gap-2">
                   <span class="badge" style="background:#FEF3C7;color:#D97706">Cancellation Requested</span>
                   <p class="text-gray-400 text-xs">
-                    ${booking.cancellationRequestedAt
-                      ? new Date(booking.cancellationRequestedAt).toLocaleString()
-                      : ''}
+                    ${
+                      booking.cancellationRequestedAt
+                        ? new Date(
+                            booking.cancellationRequestedAt,
+                          ).toLocaleString()
+                        : ""
+                    }
                   </p>
                 </div>
               </div>
 
               <div class="flex justify-end gap-3 mt-4 pt-4 border-t">
-                <!-- Cancel & Refund — disabled when booking is within 2 hours -->
                 <button
-                  onclick="${isRefundEligible ? `approveCancellation('${booking._id}')` : ''}"
-                  ${!isRefundEligible ? 'disabled' : ''}
+                  onclick="${isRefundEligible ? `approveCancellation('${booking._id}')` : ""}"
+                  ${!isRefundEligible ? "disabled" : ""}
                   class="px-6 py-2 rounded-xl text-white font-medium text-sm transition
-                         ${isRefundEligible ? 'btn-approve cursor-pointer' : 'cursor-not-allowed'}"
-                  style="${!isRefundEligible ? 'background:#9CA3AF' : ''}"
-                  title="${!isRefundEligible
-                    ? 'Booking is within 2 hours — refund not eligible'
-                    : 'Cancel and refund user'}">
+                         ${isRefundEligible ? "btn-approve cursor-pointer" : "cursor-not-allowed"}"
+                  style="${!isRefundEligible ? "background:#9CA3AF" : ""}"
+                  title="${
+                    !isRefundEligible
+                      ? "Booking is within 2 hours — refund not eligible"
+                      : "Cancel and refund user"
+                  }">
                   ✓ Cancel &amp; Refund
                 </button>
-
-                <!-- Cancel without refund -->
                 <button
                   onclick="approveCancellationNoRefund('${booking._id}')"
                   class="px-6 py-2 rounded-xl text-white font-medium text-sm transition cursor-pointer"
@@ -699,93 +1003,108 @@
                   ✕ Reject
                 </button>
               </div>
-
-              <!-- Refund eligibility indicator -->
               <div class="mt-3 flex items-center gap-2">
-                <div class="w-2 h-2 rounded-full ${isRefundEligible ? 'bg-green-500' : 'bg-red-500'}"></div>
-                <p class="text-sm font-medium ${isRefundEligible ? 'text-green-600' : 'text-red-600'}">
-                  ${isRefundEligible
-                    ? '✓ Refund eligible — booking starts in more than 2 hours'
-                    : '✗ No refund — booking starts within 2 hours'}
+                <div class="w-2 h-2 rounded-full ${isRefundEligible ? "bg-green-500" : "bg-red-500"}"></div>
+                <p class="text-sm font-medium ${isRefundEligible ? "text-green-600" : "text-red-600"}">
+                  ${
+                    isRefundEligible
+                      ? "✓ Refund eligible — booking starts in more than 2 hours"
+                      : "✗ No refund — booking starts within 2 hours"
+                  }
                 </p>
               </div>
             </div>`;
-        }).join('');
-
-      } catch (err) {
-        listEl.innerHTML = `
-            <div class="card rounded-xl p-10 text-center">
-              <p class="text-red-500">Failed to load cancellation requests</p>
+            })
+            .join("");
+        } catch (err) {
+          listEl.innerHTML = `
+          <div class="card rounded-2xl p-12 text-center">
+            <p class="text-red-500">Failed to load cancellation requests</p>
           </div>`;
-      }
-    }
-
-    async function approveCancellation(bookingId) {
-      if (!confirm('Cancel this booking and initiate refund?')) return;
-      try {
-        const res  = await fetch(`${API_BASE}/api/bookings/${bookingId}/approve-cancellation`, {
-          method:  'POST',
-          headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' }
-        });
-        const data = await res.json();
-        if (res.ok) {
-          showToast(data.message || 'Cancellation approved');
-          loadCancellations();
-        } else {
-          showToast(data.message || 'Failed to approve', 'error');
         }
-      } catch (err) {
-        showToast('Failed to approve cancellation', 'error');
       }
-    }
 
-    async function approveCancellationNoRefund(bookingId) {
-      if (!confirm('Cancel this booking without refund? The user will NOT receive their money back.')) return;
-      try {
-        const res  = await fetch(`${API_BASE}/api/bookings/${bookingId}/approve-cancellation-no-refund`, {
-          method:  'POST',
-          headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' }
-        });
-        const data = await res.json();
-        if (res.ok) {
-          showToast('Booking cancelled, no refund issued');
-          loadCancellations();
-        } else {
-          showToast(data.message || 'Failed', 'error');
+      async function approveCancellation(bookingId) {
+        if (!confirm("Cancel this booking and initiate refund?")) return;
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/bookings/${bookingId}/approve-cancellation`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          const data = await res.json();
+          if (res.ok) {
+            showToast(data.message || "Cancellation approved");
+            loadCancellations();
+          } else {
+            showToast(data.message || "Failed to approve", "error");
+          }
+        } catch (err) {
+          showToast("Failed to approve cancellation", "error");
         }
-      } catch (err) {
-        showToast('Failed to cancel booking', 'error');
       }
-    }
 
-    function openRejectCancellationModal(bookingId) {
-      selectedAppForReject = bookingId;
-      document.getElementById('reject-reason').value          = '';
-      document.getElementById('reject-modal').dataset.type    = 'cancellation';
-      document.getElementById('reject-modal-btn').textContent = 'Reject Cancellation';
-      document.getElementById('reject-modal').classList.remove('hidden');
-    }
-
-    // ── Application detail ─────────────────────────────────────────
-
-    async function viewApplication(id) {
-      try {
-        const res  = await fetch(`${API_BASE}/admin/applications/${id}`, {
-          headers: { 'Authorization': `Bearer ${authToken}` }
-        });
-        const data = await res.json();
-        showDetailModal(data.application);
-      } catch (err) {
-        showToast('Failed to load application details', 'error');
+      async function approveCancellationNoRefund(bookingId) {
+        if (
+          !confirm(
+            "Cancel this booking without refund? The user will NOT receive their money back.",
+          )
+        )
+          return;
+        try {
+          const res = await fetch(
+            `${API_BASE}/api/bookings/${bookingId}/approve-cancellation-no-refund`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          const data = await res.json();
+          if (res.ok) {
+            showToast("Booking cancelled, no refund issued");
+            loadCancellations();
+          } else {
+            showToast(data.message || "Failed", "error");
+          }
+        } catch (err) {
+          showToast("Failed to cancel booking", "error");
+        }
       }
-    }
 
-    function showDetailModal(app) {
-      selectedAppId = app._id;
-      const content = document.getElementById('detail-content');
-      const actions = document.getElementById('detail-actions');
+      function openRejectCancellationModal(bookingId) {
+        selectedAppForReject = bookingId;
+        document.getElementById("reject-reason").value = "";
+        document.getElementById("reject-modal").dataset.type = "cancellation";
+        document.getElementById("reject-modal-btn").textContent =
+          "Reject Cancellation";
+        document.getElementById("reject-modal").classList.remove("hidden");
+      }
+      async function viewApplication(id) {
+        try {
+          const res = await fetch(`${API_BASE}/admin/applications/${id}`, {
+            headers: { Authorization: `Bearer ${authToken}` },
+          });
+          const data = await res.json();
+          showDetailModal(data.application);
+        } catch (err) {
+          showToast("Failed to load application details", "error");
+        }
+      }
 
-      content.innerHTML = `
+      function showDetailModal(app) {
+        selectedAppId = app._id;
+        const content = document.getElementById("detail-content");
+        const actions = document.getElementById("detail-actions");
+
+        content.innerHTML = `
         <div class="grid md:grid-cols-2 gap-6">
 
           <!-- Personal Information -->
@@ -794,121 +1113,143 @@
             <div class="space-y-2">
               <p><span class="text-gray-500">Name:</span>            <span class="font-medium">${app.fullName}</span></p>
               <p><span class="text-gray-500">Email:</span>           <span class="font-medium">${app.email}</span></p>
-              <p><span class="text-gray-500">Alternate Email:</span> <span class="font-medium">${app.alternateEmail || 'N/A'}</span></p>
-              <p><span class="text-gray-500">Phone:</span>           <span class="font-medium">${app.phone || 'N/A'}</span></p>
-              <p><span class="text-gray-500">Alternate Phone:</span> <span class="font-medium">${app.alternatePhone || 'N/A'}</span></p>
+              <p><span class="text-gray-500">Alternate Email:</span> <span class="font-medium">${app.alternateEmail || "N/A"}</span></p>
+              <p><span class="text-gray-500">Phone:</span>           <span class="font-medium">${app.phone || "N/A"}</span></p>
+              <p><span class="text-gray-500">Alternate Phone:</span> <span class="font-medium">${app.alternatePhone || "N/A"}</span></p>
             </div>
             <h3 class="font-semibold text-gray-800 border-b pb-2 mt-6">Business Information</h3>
             <div class="space-y-2">
-              <p><span class="text-gray-500">Service Type:</span> <span class="font-medium">${app.serviceType || 'N/A'}</span></p>
-              <p><span class="text-gray-500">Area:</span>         <span class="font-medium">${app.area || 'N/A'}</span></p>
+              <p><span class="text-gray-500">Service Type:</span> <span class="font-medium">${app.serviceType || "N/A"}</span></p>
+              <p><span class="text-gray-500">Area:</span>         <span class="font-medium">${app.area || "N/A"}</span></p>
             </div>
           </div>
-
-          <!-- Address & Identity -->
+//id
           <div class="space-y-4">
             <h3 class="font-semibold text-gray-800 border-b pb-2">Address</h3>
             <div class="space-y-2">
-              <p><span class="text-gray-500">Address:</span> <span class="font-medium">${app.address || 'N/A'}</span></p>
-              <p><span class="text-gray-500">City:</span>    <span class="font-medium">${app.city || 'N/A'}</span></p>
-              <p><span class="text-gray-500">State:</span>   <span class="font-medium">${app.state || 'N/A'}</span></p>
-              <p><span class="text-gray-500">Pincode:</span> <span class="font-medium">${app.pincode || 'N/A'}</span></p>
+              <p><span class="text-gray-500">Address:</span> <span class="font-medium">${app.address || "N/A"}</span></p>
+              <p><span class="text-gray-500">City:</span>    <span class="font-medium">${app.city || "N/A"}</span></p>
+              <p><span class="text-gray-500">State:</span>   <span class="font-medium">${app.state || "N/A"}</span></p>
+              <p><span class="text-gray-500">Pincode:</span> <span class="font-medium">${app.pincode || "N/A"}</span></p>
             </div>
             <h3 class="font-semibold text-gray-800 border-b pb-2 mt-6">Identity</h3>
             <div class="space-y-2">
-              <p><span class="text-gray-500">ID Type:</span>   <span class="font-medium">${app.idType?.toUpperCase() || 'N/A'}</span></p>
-              <p><span class="text-gray-500">ID Number:</span> <span class="font-medium">${app.idNumber || 'N/A'}</span></p>
+              <p><span class="text-gray-500">ID Type:</span>   <span class="font-medium">${app.idType?.toUpperCase() || "N/A"}</span></p>
+              <p><span class="text-gray-500">ID Number:</span> <span class="font-medium">${app.idNumber || "N/A"}</span></p>
             </div>
           </div>
-
-          <!-- Documents -->
+//doc
           <div class="md:col-span-2">
             <h3 class="font-semibold text-gray-800 border-b pb-2 mb-4">Documents</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-              ${app.idImageUrl ? `
+              ${
+                app.idImageUrl
+                  ? `
                 <div class="text-center">
                   <img src="${app.idImageUrl}" alt="ID"
                        class="doc-preview mx-auto mb-2" onclick="showImage('${app.idImageUrl}')">
                   <p class="text-sm text-gray-500">ID Proof</p>
-                </div>` : '<p class="text-gray-400">No ID image</p>'}
+                </div>`
+                  : '<p class="text-gray-400">No ID image</p>'
+              }
 
-              ${app.selfieUrl ? `
+              ${
+                app.selfieUrl
+                  ? `
                 <div class="text-center">
                   <img src="${app.selfieUrl}" alt="Selfie"
                        class="doc-preview mx-auto mb-2" onclick="showImage('${app.selfieUrl}')">
                   <p class="text-sm text-gray-500">Selfie</p>
-                </div>` : ''}
+                </div>`
+                  : ""
+              }
 
-              ${app.addressProofUrl ? `
+              ${
+                app.addressProofUrl
+                  ? `
                 <div class="text-center">
                   <img src="${app.addressProofUrl}" alt="Address Proof"
                        class="doc-preview mx-auto mb-2" onclick="showImage('${app.addressProofUrl}')">
                   <p class="text-sm text-gray-500">Address Proof</p>
-                </div>` : ''}
+                </div>`
+                  : ""
+              }
 
-              ${app.businessProofUrl ? `
+              ${
+                app.businessProofUrl
+                  ? `
                 <div class="text-center">
                   <img src="${app.businessProofUrl}" alt="Business Proof"
                        class="doc-preview mx-auto mb-2" onclick="showImage('${app.businessProofUrl}')">
                   <p class="text-sm text-gray-500">Business Proof</p>
-                </div>` : ''}
+                </div>`
+                  : ""
+              }
 
-              ${app.cancelledChequeUrl ? `
+              ${
+                app.cancelledChequeUrl
+                  ? `
                 <div class="text-center">
                   <img src="${app.cancelledChequeUrl}" alt="Cancelled Cheque"
                        class="doc-preview mx-auto mb-2" onclick="showImage('${app.cancelledChequeUrl}')">
                   <p class="text-sm text-gray-500">Cancelled Cheque</p>
-                </div>` : ''}
+                </div>`
+                  : ""
+              }
             </div>
           </div>
-
-          <!-- Payment Details -->
+// Payment 
           <div class="md:col-span-2">
             <h3 class="font-semibold text-gray-800 border-b pb-2 mb-4">Payment Details</h3>
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div class="bg-green-50 p-4 rounded-xl">
                 <p class="text-xs text-gray-500 mb-1">Bank Name</p>
-                <p class="font-semibold text-gray-800">${app.bankName || 'N/A'}</p>
+                <p class="font-semibold text-gray-800">${app.bankName || "N/A"}</p>
               </div>
               <div class="bg-green-50 p-4 rounded-xl">
                 <p class="text-xs text-gray-500 mb-1">Account Number</p>
                 <p class="font-semibold text-gray-800">
-  ${app.bankAccountNumber || 'N/A'}
+  ${app.bankAccountNumber || "N/A"}
 </p>
               </div>
               <div class="bg-green-50 p-4 rounded-xl">
                 <p class="text-xs text-gray-500 mb-1">IFSC Code</p>
-                <p class="font-semibold text-gray-800">${app.ifscCode || 'N/A'}</p>
+                <p class="font-semibold text-gray-800">${app.ifscCode || "N/A"}</p>
               </div>
               <div class="bg-green-50 p-4 rounded-xl">
                 <p class="text-xs text-gray-500 mb-1">Branch</p>
-                <p class="font-semibold text-gray-800">${app.bankBranch || 'N/A'}</p>
+                <p class="font-semibold text-gray-800">${app.bankBranch || "N/A"}</p>
               </div>
             </div>
-            ${app.upiId ? `
+            ${
+              app.upiId
+                ? `
               <div class="mt-4">
                 <div class="bg-purple-50 p-4 rounded-xl inline-flex items-center gap-2">
                   <span class="text-xs text-gray-500">UPI ID:</span>
                   <span class="font-semibold text-purple-700">${app.upiId}</span>
                 </div>
-              </div>` : ''}
+              </div>`
+                : ""
+            }
           </div>
-
-          <!-- Rejection reason (only shown for rejected apps) -->
-          ${app.status === 'rejected' && app.rejectionReason ? `
+          ${
+            app.status === "rejected" && app.rejectionReason
+              ? `
             <div class="md:col-span-2">
               <h3 class="font-semibold text-red-600 border-b pb-2 mb-4">Rejection Reason</h3>
               <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded">
                 <p class="text-gray-700">${app.rejectionReason}</p>
               </div>
-            </div>` : ''}
+            </div>`
+              : ""
+          }
 
         </div>`;
-
-      // Action buttons depend on application status
-      if (app.status === 'pending') {
-        setSelectedAppForVerify(app);
-        actions.innerHTML = `
+        // Actions
+        if (app.status === "pending") {
+          setSelectedAppForVerify(app);
+          actions.innerHTML = `
           <button onclick="openVerifyModalFromStored()"
             class="btn-approve px-8 py-3 rounded-xl text-white font-medium transition">
             ✓ Approve
@@ -917,207 +1258,213 @@
             class="btn-reject px-8 py-3 rounded-xl text-white font-medium transition">
             ✕ Reject
           </button>`;
-      } else {
-        actions.innerHTML = `
+        } else {
+          actions.innerHTML = `
           <button onclick="closeDetailModal()"
             class="px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl text-gray-700 font-medium transition">
             Close
           </button>`;
-      }
-
-      document.getElementById('detail-modal').classList.remove('hidden');
-    }
-
-    function closeDetailModal() {
-      document.getElementById('detail-modal').classList.add('hidden');
-      selectedAppId = null;
-    }
-
-    // ── Verify / approve 
-
-    function setSelectedAppForVerify(app) {
-      selectedAppForVerify = app;
-    }
-
-    function openVerifyModalFromStored() {
-      if (selectedAppForVerify) openVerifyModal(selectedAppForVerify);
-    }
-
-    function openVerifyModal(app) {
-      selectedAppForVerify = app;
-
-      document.getElementById('verify-bankName').textContent      = app.bankName       || 'N/A';
-      document.getElementById('verify-accountNumber').textContent = app.bankAccountNumber || 'N/A';
-      document.getElementById('verify-ifscCode').textContent      = app.ifscCode       || 'N/A';
-      document.getElementById('verify-branch').textContent        = app.bankBranch     || 'N/A';
-
-      const upiContainer = document.getElementById('verify-upi-container');
-      const upiEl        = document.getElementById('verify-upiId');
-      if (app.upiId) {
-        upiEl.textContent = app.upiId;
-        upiContainer.classList.remove('hidden');
-      } else {
-        upiContainer.classList.add('hidden');
-      }
-
-      document.getElementById('verify-modal').classList.remove('hidden');
-    }
-
-    function closeVerifyModal() {
-      document.getElementById('verify-modal').classList.add('hidden');
-      selectedAppForVerify = null;
-    }
-
-    async function confirmApprove() {
-      if (!selectedAppForVerify) return;
-
-      const id  = selectedAppForVerify._id;
-      const btn = document.getElementById('verify-modal-btn');
-      btn.disabled  = true;
-      btn.innerHTML = '<div class="spinner" style="width:20px;height:20px;border-width:2px"></div>';
-
-      try {
-        const res  = await fetch(`${API_BASE}/admin/applications/${id}/approve`, {
-          method:  'POST',
-          headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' }
-        });
-        const data = await res.json();
-
-        if (res.ok) {
-          showToast('Application approved successfully');
-          closeVerifyModal();
-          closeDetailModal();
-          loadStats();
-          loadApplications(currentPage);
-        } else {
-          showToast(data.message || 'Failed to approve', 'error');
         }
-      } catch (err) {
-        showToast('Failed to approve application', 'error');
-      } finally {
-        btn.disabled  = false;
-        btn.innerHTML = '✓ Confirm &amp; Approve';
-      }
-    }
 
-    // ── Reject 
-
-    function openRejectModal(id) {
-      selectedAppForReject = id;
-      document.getElementById('reject-reason').value          = '';
-      document.getElementById('reject-modal').dataset.type    = 'application';
-      document.getElementById('reject-modal-btn').textContent = 'Reject Application';
-      document.getElementById('reject-modal').classList.remove('hidden');
-    }
-
-    function closeRejectModal() {
-      document.getElementById('reject-modal').classList.add('hidden');
-      document.getElementById('reject-modal').dataset.type    = 'application';
-      document.getElementById('reject-modal-btn').textContent = 'Reject Application';
-      selectedAppForReject = null;
-    }
-
-    async function confirmReject() {
-      const reason    = document.getElementById('reject-reason').value.trim();
-      const modalType = document.getElementById('reject-modal').dataset.type;
-
-      if (!reason) {
-        showToast('Please provide a rejection reason', 'error');
-        return;
+        document.getElementById("detail-modal").classList.remove("hidden");
       }
 
-      // Cancellation rejection
-      if (modalType === 'cancellation') {
+      function closeDetailModal() {
+        document.getElementById("detail-modal").classList.add("hidden");
+        selectedAppId = null;
+      }
+      function setSelectedAppForVerify(app) {
+        selectedAppForVerify = app;
+      }
+
+      function openVerifyModalFromStored() {
+        if (selectedAppForVerify) openVerifyModal(selectedAppForVerify);
+      }
+
+      function openVerifyModal(app) {
+        selectedAppForVerify = app;
+
+        document.getElementById("verify-bankName").textContent =
+          app.bankName || "N/A";
+        document.getElementById("verify-accountNumber").textContent =
+          app.bankAccountNumber || "N/A";
+        document.getElementById("verify-ifscCode").textContent =
+          app.ifscCode || "N/A";
+        document.getElementById("verify-branch").textContent =
+          app.bankBranch || "N/A";
+
+        const upiContainer = document.getElementById("verify-upi-container");
+        const upiEl = document.getElementById("verify-upiId");
+        if (app.upiId) {
+          upiEl.textContent = app.upiId;
+          upiContainer.classList.remove("hidden");
+        } else {
+          upiContainer.classList.add("hidden");
+        }
+
+        document.getElementById("verify-modal").classList.remove("hidden");
+      }
+
+      function closeVerifyModal() {
+        document.getElementById("verify-modal").classList.add("hidden");
+        selectedAppForVerify = null;
+      }
+
+      async function confirmApprove() {
+        if (!selectedAppForVerify) return;
+
+        const id = selectedAppForVerify._id;
+        const btn = document.getElementById("verify-modal-btn");
+        btn.disabled = true;
+        btn.innerHTML =
+          '<div class="spinner" style="width:20px;height:20px;border-width:2px"></div>';
+
         try {
-          const res  = await fetch(
-            `${API_BASE}/api/bookings/${selectedAppForReject}/reject-cancellation`,
+          const res = await fetch(
+            `${API_BASE}/admin/applications/${id}/approve`,
             {
-              method:  'POST',
-              headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
-              body:    JSON.stringify({ reason })
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+                "Content-Type": "application/json",
+              },
+            },
+          );
+          const data = await res.json();
+
+          if (res.ok) {
+            showToast("Application approved successfully");
+            closeVerifyModal();
+            closeDetailModal();
+            loadStats();
+            loadApplications(currentPage);
+          } else {
+            showToast(data.message || "Failed to approve", "error");
+          }
+        } catch (err) {
+          showToast("Failed to approve application", "error");
+        } finally {
+          btn.disabled = false;
+          btn.innerHTML = "✓ Confirm &amp; Approve";
+        }
+      }
+
+      function openRejectModal(id) {
+        selectedAppForReject = id;
+        document.getElementById("reject-reason").value = "";
+        document.getElementById("reject-modal").dataset.type = "application";
+        document.getElementById("reject-modal-btn").textContent =
+          "Reject Application";
+        document.getElementById("reject-modal").classList.remove("hidden");
+      }
+
+      function closeRejectModal() {
+        document.getElementById("reject-modal").classList.add("hidden");
+        document.getElementById("reject-modal").dataset.type = "application";
+        document.getElementById("reject-modal-btn").textContent =
+          "Reject Application";
+        selectedAppForReject = null;
+      }
+
+      async function confirmReject() {
+        const reason = document.getElementById("reject-reason").value.trim();
+        const modalType = document.getElementById("reject-modal").dataset.type;
+
+        if (!reason) {
+          showToast("Please provide a rejection reason", "error");
+          return;
+        }
+        if (modalType === "cancellation") {
+          try {
+            const res = await fetch(
+              `${API_BASE}/api/bookings/${selectedAppForReject}/reject-cancellation`,
+              {
+                method: "POST",
+                headers: {
+                  Authorization: `Bearer ${authToken}`,
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ reason }),
+              },
+            );
+            const data = await res.json();
+            if (res.ok) {
+              showToast("Cancellation request rejected");
+              closeRejectModal();
+              loadCancellations();
+            } else {
+              showToast(data.message || "Failed to reject", "error");
             }
+          } catch (err) {
+            showToast("Failed to reject", "error");
+          }
+          return;
+        }
+        try {
+          const res = await fetch(
+            `${API_BASE}/admin/applications/${selectedAppForReject}/reject`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: `Bearer ${authToken}`,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ reason }),
+            },
           );
           const data = await res.json();
           if (res.ok) {
-            showToast('Cancellation request rejected');
+            showToast("Application rejected");
             closeRejectModal();
-            loadCancellations();
+            closeDetailModal();
+            loadStats();
+            loadApplications(currentPage);
           } else {
-            showToast(data.message || 'Failed to reject', 'error');
+            showToast(data.message || "Failed to reject", "error");
           }
         } catch (err) {
-          showToast('Failed to reject', 'error');
+          showToast("Failed to reject application", "error");
         }
-        return;
+      }
+      function showImage(src) {
+        document.getElementById("modal-image").src = src;
+        document.getElementById("image-modal").classList.remove("hidden");
       }
 
-      // Application rejection
-      try {
-        const res  = await fetch(
-          `${API_BASE}/admin/applications/${selectedAppForReject}/reject`,
-          {
-            method:  'POST',
-            headers: { 'Authorization': `Bearer ${authToken}`, 'Content-Type': 'application/json' },
-            body:    JSON.stringify({ reason })
-          }
-        );
-        const data = await res.json();
-        if (res.ok) {
-          showToast('Application rejected');
-          closeRejectModal();
+      function closeImageModal() {
+        document.getElementById("image-modal").classList.add("hidden");
+      }
+
+      function formatDate(date) {
+        return new Date(date).toLocaleDateString("en-IN", {
+          day: "numeric",
+          month: "short",
+          year: "numeric",
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+      }
+
+      function showToast(message, type = "success") {
+        const container = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+        toast.className = `toast px-6 py-4 rounded-xl shadow-lg text-white font-medium
+                         ${type === "error" ? "bg-red-500" : "bg-green-500"}`;
+        toast.textContent = message;
+        container.appendChild(toast);
+        setTimeout(() => {
+          toast.style.animation = "slideIn 0.3s ease-out reverse";
+          setTimeout(() => toast.remove(), 300);
+        }, 3000);
+      }
+
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
           closeDetailModal();
-          loadStats();
-          loadApplications(currentPage);
-        } else {
-          showToast(data.message || 'Failed to reject', 'error');
+          closeRejectModal();
+          closeImageModal();
         }
-      } catch (err) {
-        showToast('Failed to reject application', 'error');
-      }
-    }
-
-    // ── Image viewer 
-
-    function showImage(src) {
-      document.getElementById('modal-image').src = src;
-      document.getElementById('image-modal').classList.remove('hidden');
-    }
-
-    function closeImageModal() {
-      document.getElementById('image-modal').classList.add('hidden');
-    }
-
-    // ── Utilities 
-
-    function formatDate(date) {
-      return new Date(date).toLocaleDateString('en-IN', {
-        day: 'numeric', month: 'short', year: 'numeric',
-        hour: '2-digit', minute: '2-digit'
       });
-    }
-
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toast-container');
-      const toast     = document.createElement('div');
-      toast.className = `toast px-6 py-4 rounded-xl shadow-lg text-white font-medium
-                         ${type === 'error' ? 'bg-red-500' : 'bg-green-500'}`;
-      toast.textContent = message;
-      container.appendChild(toast);
-      setTimeout(() => {
-        toast.style.animation = 'slideIn 0.3s ease-out reverse';
-        setTimeout(() => toast.remove(), 300);
-      }, 3000);
-    }
-
-    // ── Keyboard shortcuts 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        closeDetailModal();
-        closeRejectModal();
-        closeImageModal();
-      }
-    });
-
-  </script>
-</body>
+    </script>
+  </body>
 </html>
