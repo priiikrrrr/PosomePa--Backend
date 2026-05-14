@@ -268,7 +268,7 @@ exports.markAsRead = async (req, res) => {
 
     res.json({ message: 'Marked as read' });
   } catch (error) {
-    console.error('Mark as read error:', error);
+    console.error(error);
     res.status(500).json({ message: 'Failed to update message' });
   }
 };
@@ -282,9 +282,9 @@ exports.markAllAsRead = async (req, res) => {
       { read: true }
     );
 
-    res.json({ message: 'All messages marked as read' });
+    res.json({ success: true });
   } catch (error) {
-    console.error('Mark all as read error:', error);
+    console.error(error);
     res.status(500).json({ message: 'Failed to update messages' });
   }
 };

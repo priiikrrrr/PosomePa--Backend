@@ -156,10 +156,8 @@ exports.resendOTP = async (req, res) => {
       attempts: 0
     });
     await newOTP.save();
-
-    // Firebase handles OTP delivery
     res.status(200).json({ 
-      message: 'OTP resent successfully'
+      message: 'OTP resent '
     });
   } catch (error) {
     console.error('Resend OTP Error:', error);
@@ -204,7 +202,7 @@ exports.completeRegistration = async (req, res) => {
     user = await User.findOne({ email: lowerEmail });
     if (user) {
       if (user.phone && user.phone !== formattedPhone && user.phone !== '') {
-        return res.status(400).json({ message: 'This email is already associated with another phone number' });
+        return res.status(400).json({ message: 'email already in use' });
       }
       user.phone = formattedPhone;
       user.name = name;
@@ -254,13 +252,12 @@ exports.completeRegistration = async (req, res) => {
   } catch (error) {
     console.error('Complete Registration Error:', error);
     if (error.code === 11000) {
-      return res.status(400).json({ message: 'Phone number already registered with another account' });
+      return res.status(400).json({ message: 'Phone number already in use' });
     }
     res.status(500).json({ message: 'Failed to complete registration: ' + error.message });
   }
 };
 
-// Send OTP for phone update (for authenticated users)
 exports.sendPhoneUpdateOTP = async (req, res) => {
   try {
     const { phone } = req.body;
