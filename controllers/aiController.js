@@ -6,7 +6,7 @@ const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const SYSTEM_PROMPT = `You are a smart property search assistant for PosomePa. Your job is to parse natural language queries about property searches.
 
 Given a user query, extract the following filters:
-- location: city or area name (lowercase)
+- location: city or area name (lowercase). If no location mentioned, omit this field entirely. Never return "unknown", "undefined", "any" or "null".
 - maxPrice: maximum price per hour in rupees (if mentioned)
 - minRating: minimum rating (if mentioned)
 - category: type of property (if mentioned, e.g., "studio", "party hall", "apartment")
@@ -80,13 +80,15 @@ exports.smartSearch = async (req, res) => {
     // const mongoQuery = { isActive: true };
     const mongoQuery = {}; 
 
+const invalidLocations = ['undefined', 'unknown', 'null', 'n/a', 'none', 'any'];
+
 if (filters.location && 
     typeof filters.location === 'string' && 
     filters.location.trim() !== '' && 
-    filters.location.trim().toLowerCase() !== 'undefined') { 
+    !invalidLocations.includes(filters.location.trim().toLowerCase())) {
   mongoQuery['location.city'] = { $regex: new RegExp(filters.location.trim(), 'i') };
+}
 
-} 
 // console.log('Category filter:', filters.category, '→ matched:', matchingCategories.length);
 if (filters.category && typeof filters.category === 'string' && filters.category.trim() !== '') {
   const Category = require('../models/Category');
