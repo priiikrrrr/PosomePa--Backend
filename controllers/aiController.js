@@ -83,13 +83,15 @@ exports.smartSearch = async (req, res) => {
    if (filters.location && typeof filters.location === 'string' && filters.location.trim() !== '') {
   mongoQuery['location.city'] = { $regex: new RegExp(filters.location.trim(), 'i') };
 } 
-console.log('Category filter:', filters.category, '→ matched:', matchingCategories.length);
+// console.log('Category filter:', filters.category, '→ matched:', matchingCategories.length);
 if (filters.category && typeof filters.category === 'string' && filters.category.trim() !== '') {
   const Category = require('../models/Category');
   const matchingCategories = await Category.find({ 
     name: { $regex: new RegExp(filters.category.trim(), 'i') },
     isActive: true
   }).select('_id');
+  
+  console.log('Category filter:', filters.category, '→ matched:', matchingCategories.length); // ✅ INSIDE
   
   if (matchingCategories.length > 0) {
     mongoQuery.category = { $in: matchingCategories.map(c => c._id) };

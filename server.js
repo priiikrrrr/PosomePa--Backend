@@ -22,7 +22,7 @@ const app = express();
 
 connectDB();
 
-// Scheduled cleanup of stale abandoned bookings (15 minutes)
+// 
 const Booking = require('./models/Booking');
 const cleanupStaleBookings = async () => {
   try {
@@ -39,10 +39,8 @@ const cleanupStaleBookings = async () => {
   }
 };
 
-// Run every 15 minutes
 setInterval(cleanupStaleBookings, 15 * 60 * 1000);
 
-// Also run once on server start
 cleanupStaleBookings();
 
 app.use(cors({
@@ -79,7 +77,6 @@ app.get('/', (req, res) => {
   res.json({ status: 'ok', message: 'PosomePa API is running' });
 });
 
-// Serve uploaded files statically
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/api/health', (req, res) => {
