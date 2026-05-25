@@ -77,12 +77,13 @@ exports.smartSearch = async (req, res) => {
         return res.status(500).json({ message: 'Failed to parse AI response' });
       }
     }
-    const mongoQuery = { isActive: true };
+    // const mongoQuery = { isActive: true };
+    const mongoQuery = {}; 
 
    if (filters.location && typeof filters.location === 'string' && filters.location.trim() !== '') {
   mongoQuery['location.city'] = { $regex: new RegExp(filters.location.trim(), 'i') };
 } 
-//Space model is a referenced ObjectId not string field hence the regex error
+console.log('Category filter:', filters.category, '→ matched:', matchingCategories.length);
 if (filters.category && typeof filters.category === 'string' && filters.category.trim() !== '') {
   const Category = require('../models/Category');
   const matchingCategories = await Category.find({ 
@@ -104,7 +105,9 @@ if (filters.category && typeof filters.category === 'string' && filters.category
     }
 
     if (filters.amenities && filters.amenities.length > 0) {
-      mongoQuery.amenities = { $all: filters.amenities };
+      mongoQuery.amenities = { 
+  $all: filters.amenities.map(a => new RegExp(a, 'i')) 
+};
     }
     let sortOption = { rating: -1 }; // Default
     if (filters.sortBy === 'price_low') {
@@ -116,11 +119,13 @@ if (filters.category && typeof filters.category === 'string' && filters.category
     }
 
     const limit = filters.limit || 5;
-
+console.log('AI Filters:', JSON.stringify(filters, null, 2));
+console.log('Mongo Query:', JSON.stringify(mongoQuery, null, 2));
     const spaces = await Space.find(mongoQuery)
       .sort(sortOption)
       .limit(limit)
       .populate('category', 'name icon color');
+      console.log('Spaces found:', spaces.length);
     let summary = '';
     if (filters.location) {
       summary += `properties in ${filters.location.charAt(0).toUpperCase() + filters.location.slice(1)}`;
