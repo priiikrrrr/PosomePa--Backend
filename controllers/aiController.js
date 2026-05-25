@@ -80,8 +80,12 @@ exports.smartSearch = async (req, res) => {
     // const mongoQuery = { isActive: true };
     const mongoQuery = {}; 
 
-   if (filters.location && typeof filters.location === 'string' && filters.location.trim() !== '') {
+if (filters.location && 
+    typeof filters.location === 'string' && 
+    filters.location.trim() !== '' && 
+    filters.location.trim().toLowerCase() !== 'undefined') { 
   mongoQuery['location.city'] = { $regex: new RegExp(filters.location.trim(), 'i') };
+
 } 
 // console.log('Category filter:', filters.category, '→ matched:', matchingCategories.length);
 if (filters.category && typeof filters.category === 'string' && filters.category.trim() !== '') {
